@@ -26,27 +26,44 @@ LOG_FILE = os.path.join(DATA_DIR, "app.log")
 os.makedirs(DATA_DIR, exist_ok=True)
 logging.basicConfig(filename=LOG_FILE, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# --- INTERNATIONALIZATION ---
-SYSTEM_LOCALE_PATH = "/app/share/locale"
-LOCAL_LOCALE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "locales")
-LOCALE_DIR = SYSTEM_LOCALE_PATH if os.path.exists(SYSTEM_LOCALE_PATH) else LOCAL_LOCALE_PATH
+# --- INTERNATIONALIZATION SETUP ---
+APP_NAME = "p7mextractor"
+
+# 1. Define Paths
+SYSTEM_PATH = "/app/share/locale"
+LOCAL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "locales")
+
+if os.path.exists(SYSTEM_PATH):
+    LOCALE_DIR = SYSTEM_PATH
+else:
+    LOCALE_DIR = LOCAL_PATH
 
 try:
-    # Force C locale to parse env vars correctly
     locale.setlocale(locale.LC_ALL, '')
     
-    # Robust Language Detection for Flatpak
     lang_code = os.environ.get('LC_ALL') or os.environ.get('LC_MESSAGES') or os.environ.get('LANG')
+    
     if lang_code:
+        
         lang_code = lang_code.split('.')[0]
+        
         languages = [lang_code, lang_code.split('_')[0], 'en']
     else:
         languages = ['en']
 
-    lang = gettext.translation(APP_NAME, localedir=LOCALE_DIR, languages=languages, fallback=True)
+    print(f"DEBUG: Detected Languages: {languages}")
+    print(f"DEBUG: Looking in: {LOCALE_DIR}")
+
+    lang = gettext.translation(
+        APP_NAME, 
+        localedir=LOCALE_DIR, 
+        languages=languages, 
+        fallback=True
+    )
     lang.install()
+    
 except Exception as e:
-    logging.warning(f"Translation setup failed: {e}")
+    print(f"Translation Error: {e}")
     def _(s): return s
 
 # --- DATA MODEL ---
