@@ -88,6 +88,7 @@ pip install PyGObject
 5. Run the application
 ```bash
 python p7mextractor.py
+```
 
 ## License
 
