@@ -370,7 +370,6 @@ class P7MExtractorApp(Adw.Application):
             GLib.idle_add(self.progress_bar.set_fraction, (i + 1) / count)
 
         GLib.idle_add(self.finish_conversion)
-
     def finish_conversion(self):
         self.lbl_status.set_label(_("Extraction Complete"))
         self.btn_convert.set_sensitive(True)
